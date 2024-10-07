@@ -121,6 +121,7 @@ libraries.lwjgl3GLES = [
         "org.lwjgl:lwjgl-opengles:${versions.lwjgl3}:natives-macos-arm64",
         "org.lwjgl:lwjgl-opengles:${versions.lwjgl3}:natives-windows",
         "org.lwjgl:lwjgl-opengles:${versions.lwjgl3}:natives-windows-x86",
+        "org.lwjgl:lwjgl-glfw:${versions.lwjgl3}",
         "org.lwjgl:lwjgl-egl:${versions.lwjgl3}",
 ]
 

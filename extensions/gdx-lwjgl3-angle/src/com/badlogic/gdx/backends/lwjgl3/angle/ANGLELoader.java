@@ -17,6 +17,10 @@
 package com.badlogic.gdx.backends.lwjgl3.angle;
 
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import org.lwjgl.egl.EGL;
+import org.lwjgl.glfw.GLFWNativeEGL;
+import org.lwjgl.opengles.GLES;
+import org.lwjgl.system.Configuration;
 
 import java.io.*;
 import java.lang.reflect.Method;
@@ -196,9 +200,7 @@ public class ANGLELoader {
 
 		if (!isMac) {
 			extractFile(eglSource, egl);
-			System.load(egl.getAbsolutePath());
 			extractFile(glesSource, gles);
-			System.load(gles.getAbsolutePath());
 		} else {
 			// On macOS, we can't preload the shared libraries. calling dlopen("path1/lib.dylib")
 			// then calling dlopen("lib.dylib") will not return the dylib loaded in the first dlopen()
@@ -211,6 +213,16 @@ public class ANGLELoader {
 			extractFile(eglSource, new File(lastWorkingDir, egl.getName()));
 			extractFile(glesSource, new File(lastWorkingDir, gles.getName()));
 		}
+
+		if (Configuration.EGL_LIBRARY_NAME.get() == null) {
+			Configuration.EGL_LIBRARY_NAME.set(egl.getAbsolutePath());
+		}
+		if (Configuration.OPENGLES_LIBRARY_NAME.get() == null) {
+			Configuration.OPENGLES_LIBRARY_NAME.set(gles.getAbsolutePath());
+		}
+
+		GLFWNativeEGL.setEGLPath(EGL.getFunctionProvider());
+		GLFWNativeEGL.setGLESPath(GLES.getFunctionProvider());
 	}
 
 	public static void postGlfwInit () {
