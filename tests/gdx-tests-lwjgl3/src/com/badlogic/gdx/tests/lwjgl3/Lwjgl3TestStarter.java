@@ -65,8 +65,8 @@ public class Lwjgl3TestStarter {
 					prependVertexCode += "#version 320 es\n";
 					prependFragmentCode += "#version 320 es\n";
 				} else if (options.gl31) {
-					prependVertexCode += "#version 320 es\n";
-					prependFragmentCode += "#version 320 es\n";
+					prependVertexCode += "#version 310 es\n";
+					prependFragmentCode += "#version 310 es\n";
 				} else if (options.gl30) {
 					prependVertexCode += "#version 300 es\n";
 					prependFragmentCode += "#version 300 es\n";
