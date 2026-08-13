@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.GdxRuntimeException;
 
 /** Shared class for desktop launchers.
  * 
