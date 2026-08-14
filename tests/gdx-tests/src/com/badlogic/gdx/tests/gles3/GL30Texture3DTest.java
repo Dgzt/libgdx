@@ -75,8 +75,7 @@ public class GL30Texture3DTest extends GdxTest {
 			+ "}";
 
 		String prepend;
-		if (Gdx.app.getType() == ApplicationType.Desktop && !GLTestUtils.isAngleGLES30()
-		) {
+		if (Gdx.app.getType() == ApplicationType.Desktop && !GLTestUtils.isAngleGLES30()) {
 			prepend = "#version 130\n";
 		} else {
 			prepend = "#version 300 es\n";

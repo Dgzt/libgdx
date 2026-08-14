@@ -64,13 +64,11 @@ public class GL30FrameBufferMultisampleMRTTest extends GdxTest {
 		String ofs = ShaderProgram.prependFragmentCode;
 
 		ShaderProgram.prependVertexCode = Gdx.app.getType().equals(Application.ApplicationType.Desktop)
-				&& !GLTestUtils.isAngleGLES30()
-			? "#version 140\n #extension GL_ARB_explicit_attrib_location : enable\n"
-			: "#version 300 es\n";
+			&& !GLTestUtils.isAngleGLES30() ? "#version 140\n #extension GL_ARB_explicit_attrib_location : enable\n"
+				: "#version 300 es\n";
 		ShaderProgram.prependFragmentCode = Gdx.app.getType().equals(Application.ApplicationType.Desktop)
-				&& !GLTestUtils.isAngleGLES30()
-			? "#version 140\n #extension GL_ARB_explicit_attrib_location : enable\n"
-			: "#version 300 es\n";
+			&& !GLTestUtils.isAngleGLES30() ? "#version 140\n #extension GL_ARB_explicit_attrib_location : enable\n"
+				: "#version 300 es\n";
 
 		shader = new ShaderProgram(Gdx.files.internal("data/shaders/shape-renderer-mrt-vert.glsl").readString(),
 			Gdx.files.internal("data/shaders/shape-renderer-mrt-frag.glsl").readString());
