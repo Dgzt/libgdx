@@ -28,6 +28,7 @@ import com.badlogic.gdx.graphics.glutils.GLFrameBuffer.FrameBufferBuilder;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.tests.utils.GLTestUtils;
 import com.badlogic.gdx.tests.utils.GdxTest;
 import com.badlogic.gdx.tests.utils.GdxTestConfig;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -59,10 +60,15 @@ public class GL30FrameBufferMultisampleMRTTest extends GdxTest {
 
 		batch = new SpriteBatch();
 
+		String ovs = ShaderProgram.prependVertexCode;
+		String ofs = ShaderProgram.prependFragmentCode;
+
 		ShaderProgram.prependVertexCode = Gdx.app.getType().equals(Application.ApplicationType.Desktop)
+				&& !GLTestUtils.isAngleGLES30()
 			? "#version 140\n #extension GL_ARB_explicit_attrib_location : enable\n"
 			: "#version 300 es\n";
 		ShaderProgram.prependFragmentCode = Gdx.app.getType().equals(Application.ApplicationType.Desktop)
+				&& !GLTestUtils.isAngleGLES30()
 			? "#version 140\n #extension GL_ARB_explicit_attrib_location : enable\n"
 			: "#version 300 es\n";
 
@@ -77,6 +83,8 @@ public class GL30FrameBufferMultisampleMRTTest extends GdxTest {
 		}
 		shapes = new ShapeRenderer(3, shader);
 
+		ShaderProgram.prependVertexCode = ovs;
+		ShaderProgram.prependFragmentCode = ofs;
 	}
 
 	@Override
