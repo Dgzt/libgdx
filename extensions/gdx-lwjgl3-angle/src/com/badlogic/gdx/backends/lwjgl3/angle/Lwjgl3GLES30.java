@@ -3,11 +3,14 @@ package com.badlogic.gdx.backends.lwjgl3.angle;
 
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import org.lwjgl.PointerBuffer;
 import org.lwjgl.opengles.GLES30;
+import org.lwjgl.system.MemoryUtil;
 
 import java.nio.*;
 
 public class Lwjgl3GLES30 extends Lwjgl3GLES20 implements GL30 {
+
 	@Override
 	public void glReadBuffer (int mode) {
 		GLES30.glReadBuffer(mode);
@@ -366,7 +369,13 @@ public class Lwjgl3GLES30 extends Lwjgl3GLES20 implements GL30 {
 
 	@Override
 	public void glGetUniformIndices (int program, String[] uniformNames, IntBuffer uniformIndices) {
-		// GLES30.glGetUniformIndices(program, uniformNames, uniformIndices); TODO
+		PointerBuffer pb = PointerBuffer.allocateDirect(uniformNames.length);
+		for (String uniformName : uniformNames) {
+			pb.put(MemoryUtil.memUTF8(uniformName));
+		}
+		pb.flip();
+		GLES30.glGetUniformIndices(program, pb, uniformIndices);
+		pb.free();
 	}
 
 	@Override
