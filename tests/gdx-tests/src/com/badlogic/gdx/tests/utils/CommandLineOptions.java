@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 
 /** Shared class for desktop launchers.
  * 
@@ -38,6 +39,9 @@ public class CommandLineOptions {
 			} else {
 				startupTestName = arg;
 			}
+		}
+		if ((gl31 || gl32) && angle) {
+			throw new GdxRuntimeException("Both --gl3[1|2] and --angle set. Can not be combined.");
 		}
 	}
 

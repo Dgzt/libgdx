@@ -92,21 +92,19 @@ public class Lwjgl3Graphics extends AbstractGraphics implements Disposable {
 
 	public Lwjgl3Graphics (Lwjgl3Window window) {
 		this.window = window;
-		if (window.getConfig().glEmulation == Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES) {
-			if (window.getConfig().gles30ContextMajorVersion == 3 && window.getConfig().gles30ContextMinorVersion == 0) {
-				try {
-					this.gl20 = this.gl30 = (GL30)Class.forName("com.badlogic.gdx.backends.lwjgl3.angle.Lwjgl3GLES30").newInstance();
-				} catch (Throwable t) {
-					throw new GdxRuntimeException("Couldn't instantiate GLES30.", t);
-				}
-			} else {
-				try {
-					this.gl20 = (GL20)Class.forName("com.badlogic.gdx.backends.lwjgl3.angle.Lwjgl3GLES20").newInstance();
-				} catch (Throwable t) {
-					throw new GdxRuntimeException("Couldn't instantiate GLES20.", t);
-				}
-				this.gl30 = null;
+		if (window.getConfig().glEmulation == Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES30) {
+			try {
+				this.gl20 = this.gl30 = (GL30) Class.forName("com.badlogic.gdx.backends.lwjgl3.angle.Lwjgl3GLES30").newInstance();
+			} catch (Throwable t) {
+				throw new GdxRuntimeException("Couldn't instantiate GLES30.", t);
 			}
+		} else if (window.getConfig().glEmulation == Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES20) {
+			try {
+				this.gl20 = (GL20)Class.forName("com.badlogic.gdx.backends.lwjgl3.angle.Lwjgl3GLES20").newInstance();
+			} catch (Throwable t) {
+				throw new GdxRuntimeException("Couldn't instantiate GLES20.", t);
+			}
+			this.gl30 = null;
 		} else if (window.getConfig().glEmulation == Lwjgl3ApplicationConfiguration.GLEmulation.GL32) {
 			this.gl20 = this.gl30 = this.gl31 = this.gl32 = new Lwjgl3GL32();
 		} else if (window.getConfig().glEmulation == Lwjgl3ApplicationConfiguration.GLEmulation.GL31) {

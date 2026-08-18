@@ -61,13 +61,7 @@ public class Lwjgl3TestStarter {
 			String prependFragmentCode = "";
 
 			if (options.angle) {
-				if (options.gl32) {
-					prependVertexCode += "#version 320 es\n";
-					prependFragmentCode += "#version 320 es\n";
-				} else if (options.gl31) {
-					prependVertexCode += "#version 310 es\n";
-					prependFragmentCode += "#version 310 es\n";
-				} else if (options.gl30) {
+				if (options.gl30) {
 					prependVertexCode += "#version 300 es\n";
 					prependFragmentCode += "#version 300 es\n";
 				}
@@ -87,23 +81,17 @@ public class Lwjgl3TestStarter {
 		}
 
 		if (options.angle) {
-			if (options.gl32) {
-				config.setOpenGLEmulation(Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES, 3, 2);
-			} else if (options.gl31) {
-				config.setOpenGLEmulation(Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES, 3, 1);
+			if (options.gl30) {
+				config.setOpenGLEmulation(Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES30, 0, 0);
 			} else {
-				if (options.gl30) {
-					config.setOpenGLEmulation(Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES, 3, 0);
-				} else {
-					config.setOpenGLEmulation(Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES, 0, 0);
-				}
+				config.setOpenGLEmulation(Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES20, 0, 0);
+			}
 
-				// Use CPU sync if ANGLE is enabled on macOS, otherwise the framerate gets halfed
-				// by each new open window.
-				if (SharedLibraryLoader.os == Os.MacOsX) {
-					config.useVsync(false);
-					config.setForegroundFPS(60);
-				}
+			// Use CPU sync if ANGLE is enabled on macOS, otherwise the framerate gets halfed
+			// by each new open window.
+			if (SharedLibraryLoader.os == Os.MacOsX) {
+				config.useVsync(false);
+				config.setForegroundFPS(60);
 			}
 		} else if (options.gl32) {
 			config.setOpenGLEmulation(Lwjgl3ApplicationConfiguration.GLEmulation.GL32, 4, 6);
@@ -136,6 +124,7 @@ public class Lwjgl3TestStarter {
 		public void create () {
 			System.out.println("OpenGL renderer: " + Gdx.graphics.getGLVersion().getRendererString());
 			System.out.println("OpenGL vendor: " + Gdx.graphics.getGLVersion().getVendorString());
+			System.out.println("OpenGL version: " + Gdx.graphics.getGLVersion().getVersionString());
 
 			final Preferences prefs = Gdx.app.getPreferences("lwjgl3-tests");
 

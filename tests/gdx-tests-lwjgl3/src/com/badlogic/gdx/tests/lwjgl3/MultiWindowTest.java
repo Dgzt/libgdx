@@ -96,7 +96,7 @@ public class MultiWindowTest {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		config.setTitle("Multi-window test");
 		config.useVsync(true);
-		config.setOpenGLEmulation(Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES, 0, 0);
+		config.setOpenGLEmulation(Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES20, 0, 0);
 		new Lwjgl3Application(new MainWindow(), config);
 	}
 }

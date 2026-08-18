@@ -121,7 +121,8 @@ public class Lwjgl3Application implements Lwjgl3ApplicationBase {
 	}
 
 	public Lwjgl3Application (ApplicationListener listener, Lwjgl3ApplicationConfiguration config) {
-		if (config.glEmulation == Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES) loadANGLE();
+		if (config.glEmulation == Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES20 ||
+				config.glEmulation == Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES30) loadANGLE();
 		initializeGlfw();
 		setApplicationLogger(new Lwjgl3ApplicationLogger());
 
@@ -147,7 +148,8 @@ public class Lwjgl3Application implements Lwjgl3ApplicationBase {
 		this.sync = new Sync();
 
 		Lwjgl3Window window = createWindow(config, listener, 0);
-		if (config.glEmulation == Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES) postLoadANGLE();
+		if (config.glEmulation == Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES20 ||
+				config.glEmulation == Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES30) postLoadANGLE();
 		windows.add(window);
 		try {
 			loop();
@@ -481,15 +483,17 @@ public class Lwjgl3Application implements Lwjgl3ApplicationBase {
 		GLFW.glfwWindowHint(GLFW.GLFW_DEPTH_BITS, config.depth);
 		GLFW.glfwWindowHint(GLFW.GLFW_SAMPLES, config.samples);
 
-		if (config.glEmulation == Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES) {
+		if (config.glEmulation == Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES20 ||
+				config.glEmulation == Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES30) {
 			GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_CREATION_API, GLFW.GLFW_EGL_CONTEXT_API);
 			GLFW.glfwWindowHint(GLFW.GLFW_CLIENT_API, GLFW.GLFW_OPENGL_ES_API);
-			if (config.gles30ContextMajorVersion < 2) {
-				GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MAJOR, 2);
+			if (config.glEmulation == Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES30) {
+				GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MAJOR, 3);
+				GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MINOR, 0);
 			} else {
-				GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MAJOR, config.gles30ContextMajorVersion);
+				GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MAJOR, 2);
+				GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MINOR, 0);
 			}
-			GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MINOR, config.gles30ContextMinorVersion);
 		} else if (config.glEmulation == Lwjgl3ApplicationConfiguration.GLEmulation.GL30
 			|| config.glEmulation == Lwjgl3ApplicationConfiguration.GLEmulation.GL31
 			|| config.glEmulation == Lwjgl3ApplicationConfiguration.GLEmulation.GL32) {
@@ -521,7 +525,8 @@ public class Lwjgl3Application implements Lwjgl3ApplicationBase {
 
 			// On Ubuntu >= 22.04 with Nvidia GPU drivers and X11 display server there's a bug with EGL Context API
 			// If the windows creation has failed for this reason try to create it again with the native context
-			if (windowHandle == 0 && config.glEmulation == Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES) {
+			if (windowHandle == 0 && (config.glEmulation == Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES20 ||
+					config.glEmulation == Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES30)) {
 				GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_CREATION_API, GLFW.GLFW_NATIVE_CONTEXT_API);
 				windowHandle = GLFW.glfwCreateWindow(config.fullscreenMode.width, config.fullscreenMode.height, config.title,
 					config.fullscreenMode.getMonitor(), sharedContextWindow);
@@ -532,7 +537,8 @@ public class Lwjgl3Application implements Lwjgl3ApplicationBase {
 
 			// On Ubuntu >= 22.04 with Nvidia GPU drivers and X11 display server there's a bug with EGL Context API
 			// If the windows creation has failed for this reason try to create it again with the native context
-			if (windowHandle == 0 && config.glEmulation == Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES) {
+			if (windowHandle == 0 && (config.glEmulation == Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES20 ||
+					config.glEmulation == Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES30)) {
 				GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_CREATION_API, GLFW.GLFW_NATIVE_CONTEXT_API);
 				windowHandle = GLFW.glfwCreateWindow(config.windowWidth, config.windowHeight, config.title, 0, sharedContextWindow);
 			}
@@ -578,7 +584,8 @@ public class Lwjgl3Application implements Lwjgl3ApplicationBase {
 		}
 		GLFW.glfwMakeContextCurrent(windowHandle);
 		GLFW.glfwSwapInterval(config.vSyncEnabled ? 1 : 0);
-		if (config.glEmulation == Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES) {
+		if (config.glEmulation == Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES20 ||
+				config.glEmulation == Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES30) {
 			try {
 				Class gles = Class.forName("org.lwjgl.opengles.GLES");
 				gles.getMethod("createCapabilities").invoke(gles);
@@ -589,18 +596,20 @@ public class Lwjgl3Application implements Lwjgl3ApplicationBase {
 			GL.createCapabilities();
 		}
 
-		initiateGL(config.glEmulation == Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES);
+		initiateGL(config.glEmulation == Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES20 ||
+				config.glEmulation == Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES30);
 		if (!glVersion.isVersionEqualToOrHigher(2, 0))
 			throw new GdxRuntimeException("OpenGL 2.0 or higher with the FBO extension is required. OpenGL version: "
 				+ glVersion.getVersionString() + "\n" + glVersion.getDebugVersionString());
 
-		if (config.glEmulation != Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES && !supportsFBO()) {
+		if (config.glEmulation != Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES20 &&
+				config.glEmulation != Lwjgl3ApplicationConfiguration.GLEmulation.ANGLE_GLES30 && !supportsFBO()) {
 			throw new GdxRuntimeException("OpenGL 2.0 or higher with the FBO extension is required. OpenGL version: "
 				+ glVersion.getVersionString() + ", FBO extension: false\n" + glVersion.getDebugVersionString());
 		}
 
 		if (config.debug) {
-			if (config.glEmulation == GLEmulation.ANGLE_GLES) {
+			if (config.glEmulation == GLEmulation.ANGLE_GLES20 || config.glEmulation == GLEmulation.ANGLE_GLES30) {
 				throw new IllegalStateException(
 					"ANGLE currently can't be used with with Lwjgl3ApplicationConfiguration#enableGLDebugOutput");
 			}
