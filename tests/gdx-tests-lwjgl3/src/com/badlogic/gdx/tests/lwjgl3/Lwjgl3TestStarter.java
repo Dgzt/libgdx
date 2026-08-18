@@ -66,8 +66,8 @@ public class Lwjgl3TestStarter {
 					prependFragmentCode += "#version 300 es\n";
 				}
 
-				prependVertexCode += "#define LOWP lowp\n#define MED mediump\n#define HIGH highp\nprecision highp float;\n";
-				prependFragmentCode += "#define LOWP lowp\n#define MED mediump\n#define HIGH highp\nprecision highp float;\n";
+				prependVertexCode += "precision mediump float;\n";
+				prependFragmentCode += "precision mediump float;\n";
 			} else {
 				prependVertexCode = "#version 140\n";
 				prependFragmentCode = "#version 140\n";
